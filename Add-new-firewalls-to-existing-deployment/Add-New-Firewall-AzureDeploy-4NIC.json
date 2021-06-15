@@ -286,7 +286,7 @@
       "location": "[resourceGroup().location]",
       "plan": {
         "name": "[parameters('imageSku')]",
-        "product": "vmseries1",
+        "product": "vmseries-flex",
         "publisher": "paloaltonetworks"
       },
       "properties": {
