@@ -99,7 +99,7 @@
       "metadata": {
         "description": "Firewall License Model"
       },
-      "defaultValue": "bundle2"
+      "defaultValue": "byol"
     },
     "virtualNetworkName": {
       "type": "string",
@@ -136,11 +136,11 @@
         "description": "EXISTING Subnet for Trust"
       }
     },
-    "vpnSubnetName": {
+    "dmzSubnetName": {
         "type": "string",
-        "defaultValue": "VPN",
+        "defaultValue": "DMZ",
         "metadata": {
-          "description": "EXISTING Subnet for Trust"
+          "description": "EXISTING Subnet for DMZ"
         }
     },
     "Username": {
@@ -169,11 +169,11 @@
     "subnet0Ref": "[concat(variables('vnetID'),'/subnets/',parameters('managementSubnetName'))]",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',parameters('untrustSubnetName'))]",
     "subnet2Ref": "[concat(variables('vnetID'),'/subnets/',parameters('trustSubnetName'))]",
-    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/',parameters('vpnSubnetName'))]",
+    "subnet3Ref": "[concat(variables('vnetID'),'/subnets/',parameters('dmzSubnetName'))]",
     "fwManagementNic": "[concat(parameters('vmName'), 'Management')]",
     "fwUntrustNic": "[concat('INT-',parameters('vmName'), '-Untrust')]",
     "fwTrustNic": "[concat('INT-',parameters('vmName'), '-Trust')]",
-    "fwVpnNic": "[concat('INT-',parameters('vmName'), '-VPN')]"
+    "fwDMZNic": "[concat('INT-',parameters('vmName'), '-DMZ')]"
   },
   "resources": [
     {
@@ -258,7 +258,7 @@
       }
     },
     {
-        "name": "[variables('fwVpnNic')]",
+        "name": "[variables('fwDMZNic')]",
         "type": "Microsoft.Network/networkInterfaces",
         "location": "[resourceGroup().location]",
         "apiVersion": "2015-06-15",
@@ -266,7 +266,7 @@
           "enableIPForwarding": true,
           "ipConfigurations": [
             {
-              "name": "ipconfig-trust",
+              "name": "ipconfig-dmz",
               "properties": {
                 "privateIPAllocationMethod": "Dynamic",
                 "subnet": {
@@ -303,7 +303,7 @@
         "storageProfile": {
           "imageReference": {
             "publisher": "paloaltonetworks",
-            "offer": "vmseries1",
+            "offer": "vmseries-flex",
             "sku": "[parameters('imageSku')]",
             "version": "[parameters('imageVersion')]"
           },
@@ -333,6 +333,11 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fwTrustNic'))]",
               "properties": {
                 "primary": false
+              },
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fwDMZNic'))]",
+              "properties": {
+                "primary": false
               }
             }
           ]
@@ -343,6 +348,7 @@
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwManagementNic'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwUntrustNic'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwTrustNic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('fwDMZNic'))]"
       ]
     }
   ]
