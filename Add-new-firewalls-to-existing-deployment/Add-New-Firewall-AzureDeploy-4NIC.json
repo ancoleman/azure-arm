@@ -82,6 +82,8 @@
                 "9.0.4",
                 "9.0.6",
                 "9.1.0",
+                "10.0.5",
+                "10.0.6",
                 "latest"
             ],
       "metadata": {
@@ -333,7 +335,8 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fwTrustNic'))]",
               "properties": {
                 "primary": false
-              },
+              }
+            },
             {
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('fwDMZNic'))]",
               "properties": {
@@ -347,7 +350,7 @@
         "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwManagementNic'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwUntrustNic'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('fwTrustNic'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('fwTrustNic'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('fwDMZNic'))]"
       ]
     }
