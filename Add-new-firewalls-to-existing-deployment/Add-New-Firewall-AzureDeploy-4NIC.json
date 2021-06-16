@@ -155,17 +155,16 @@
         "description": "Username of the administrator account of VM-Series"
       }
     },
-    "Password": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Password for the administrator account of VM-Series"
-      }
-    },
     "publicIPAddressName": {
       "type": "string",
       "metadata": {
         "description": "Name of FW1 MGMT Public Address"
+      }
+    },
+    "sshKey": {
+      "type": "string"
+      "metadata": {
+        "description": "Public Key to inject into the VM-Series"
       }
     }
   },
@@ -302,8 +301,17 @@
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('Username')]",
-          "adminPassword": "[parameters('Password')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "linuxConfiguration": {
+                  "disablePasswordAuthentication": "true",
+                  "ssh": {
+                      "publicKeys": [
+                          {
+                              "path": "[variables('sshKeyPath')]",
+                              "keyData": "[parameters('sshKey')]"
+                          }
+                      ]
+                        },
           "customData": "[if(equals(parameters('bootstrapFirewall'), bool('false')), json('null'), base64(variables('customDataField')))]"
         },
         "storageProfile": {
