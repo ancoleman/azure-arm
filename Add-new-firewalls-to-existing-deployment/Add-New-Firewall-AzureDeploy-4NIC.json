@@ -16,7 +16,7 @@
         "description": "Storage account hosting the bootstrap files"
       }
     },
-    
+
     "bootstrapFirewall": {
       "type": "string",
       "metadata": {
@@ -65,7 +65,7 @@
         "Standard_DS5_v2",
         "Standard_D3_v2",
         "Standard_D4_v2",
-        "Standard_D5_v2" 
+        "Standard_D5_v2"
       ],
       "metadata": {
         "description": "Azure VM size for VM-Series"
@@ -162,11 +162,11 @@
       }
     },
     "sshKey": {
-      "type": "string"
+      "type": "string",
       "metadata": {
         "description": "Public Key to inject into the VM-Series"
       }
-    }
+    },
   },
   "variables": {
     "customDataField": "[concat('storage-account=', parameters('BootstrapStorageAccount'), ',access-key=', parameters('StorageAccountAccessKey'), ',file-share=', parameters('StorageAccountFileShare'),',share-directory=', parameters('StorageAccountFileShareDirectory'))]",
@@ -178,7 +178,8 @@
     "fwManagementNic": "[concat(parameters('vmName'), 'Management')]",
     "fwUntrustNic": "[concat('INT-',parameters('vmName'), '-Untrust')]",
     "fwTrustNic": "[concat('INT-',parameters('vmName'), '-Trust')]",
-    "fwDMZNic": "[concat('INT-',parameters('vmName'), '-DMZ')]"
+    "fwDMZNic": "[concat('INT-',parameters('vmName'), '-DMZ')]",
+    "sshKey" : "[concat('INT-',parameters('sskKey'), '-sshKey')]"
   },
   "resources": [
     {
@@ -303,16 +304,17 @@
           "computerName": "[parameters('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "linuxConfiguration": {
-                  "disablePasswordAuthentication": "true",
-                  "ssh": {
-                      "publicKeys": [
-                          {
-                              "path": "[variables('sshKeyPath')]",
-                              "keyData": "[parameters('sshKey')]"
-                          }
-                      ]
-                        },
-          "customData": "[if(equals(parameters('bootstrapFirewall'), bool('false')), json('null'), base64(variables('customDataField')))]"
+            "disablePasswordAuthentication": "true",
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[variables('sshKeyPath')]",
+                  "keyData": "[parameters('sshKey')]"
+                }
+              ]
+            },
+            "customData": "[if(equals(parameters('bootstrapFirewall'), bool('false')), json('null'), base64(variables('customDataField')))]"
+          }
         },
         "storageProfile": {
           "imageReference": {
